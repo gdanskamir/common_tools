@@ -6,6 +6,8 @@ import log
 import logging
 import similarity_compute
 import marisa_trie
+from langconv import *
+
 
 log.init_log('./log/common_tools')
 logging.info("test levenshtein")
@@ -22,3 +24,13 @@ print marisa_trie.keys(u"as")
 print marisa_trie.items()
 print marisa_trie.items(u"as")
 
+# 转换繁体到简体
+line="中華人名共和國"
+line = Converter('zh-hans').convert(line.decode('utf-8'))
+line = line.encode('utf-8')
+print line;
+# 转换简体到繁体
+line="中华人民共和国"
+line = Converter('zh-hant').convert(line.decode('utf-8'))
+line = line.encode('utf-8')
+print line;

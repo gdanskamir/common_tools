@@ -37,27 +37,31 @@ def init_log(log_path, level=logging.INFO, when="D", backup=7,
         OSError: fail to create log directories
         IOError: fail to open log file
     """
+
     formatter = logging.Formatter(format, datefmt)
     logger = logging.getLogger()
     logger.setLevel(level)
 
-    dir = os.path.dirname(log_path)
-    if not os.path.isdir(dir):
-        os.makedirs(dir)
-
-
-    handler = logging.handlers.TimedRotatingFileHandler(log_path + ".log",
-                                                        when=when,
-                                                        backupCount=backup)
-
+    if log_path != "":
+        dir = os.path.dirname(log_path)
+        if not os.path.isdir(dir):
+            os.makedirs(dir)
+        handler = logging.handlers.TimedRotatingFileHandler(log_path + ".log",
+                when=when,
+                backupCount=backup);
+    else:
+        handler = logging.StreamHandler();
+    
     handler.setLevel(logging.INFO)
     handler.setFormatter(formatter)
     logger.addHandler(handler)
 
-
-    handler = logging.handlers.TimedRotatingFileHandler(log_path + ".log.wf",
-                                                        when=when,
-                                                        backupCount=backup)
+    if log_path != "":
+        handler = logging.handlers.TimedRotatingFileHandler(log_path + ".log.wf",
+                when=when,
+                backupCount=backup)
+    else:
+        handler = logging.StreamHandler();
     handler.setLevel(logging.WARNING)
     handler.setFormatter(formatter)
     logger.addHandler(handler)
