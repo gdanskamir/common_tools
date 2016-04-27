@@ -16,6 +16,7 @@ sys.setdefaultencoding('utf8')
 
 sys.path.append("./config")
 
+open_flag = [1, 0, 0, 1, 1, 1, 0];
 
 def utf8_gbk(string):
     return string.decode('utf8','ignore').encode('gbk','ignore')
@@ -36,7 +37,6 @@ def strQ2B(ustring):
     return rstring
 
 
-open_flag = [1, 0, 0, 1, 1, 1];
 
 try:
     import sofa
@@ -72,11 +72,68 @@ if open_flag[4] == 1:
 else:
     wordner_agent = None;
 
-if open_flag[4] == 1:
+if open_flag[5] == 1:
     no_gram = initLM(3);
     readLM(no_gram, "./lm/all_phase.0326.lm");
 else:
     no_gram = -1;
+
+if open_flag[6] == 1:
+    wordseg_agent = S.ClientAgent(conf['sofa.service.nlpc_wordseg_3016'])
+else:
+    wordseg_agent = None;
+
+
+def GET_TERM_POS(property):
+    return ((property) & 0x00FFFFFF)
+
+def GET_TERM_LEN(property):
+    return ((property) >> 24)
+
+def utf8_gbk(string):
+    return string.decode('utf8','ignore').encode('gbk','ignore')
+
+def gbk_utf8(string):
+    return string.decode('gbk','ignore').encode('utf8','ignore')
+
+
+
+def word_seg(sent):
+    m_input = nlpc.wordseg_input()
+    m_input.query = str(utf8_gbk(sent))
+    m_input.lang_id = int(0)
+    m_input.lang_para = int(0)
+    input_data = sofa.serialize(m_input)
+    for i in range(5) :
+        try:
+            ret, output_data = wordseg_agent.call_method(input_data)
+            break
+        except Exception as e:
+            continue
+    if len(output_data) == 0:
+        return [];
+    m_output = nlpc.wordseg_output()
+    m_output = sofa.deserialize(output_data, type(m_output))
+    m_output = m_output.scw_out
+    
+    ret_data = []
+    ##seg
+    for i in range(m_output.wpbtermcount):
+        posidx = GET_TERM_POS(m_output.wpbtermpos[i])
+        poslen = GET_TERM_LEN(m_output.wpbtermpos[i])
+        word = m_output.wpcompbuf[posidx : posidx + poslen]
+        ret_data.append((str(posidx), str(poslen), gbk_utf8(word)))
+
+    '''
+    for i in range(m_output.wsbtermcount):
+        posidx = GET_TERM_POS(m_output.wsbtermpos[i])   
+        poslen = GET_TERM_LEN(m_output.wsbtermpos[i])
+        word = m_output.wordsepbuf[posidx : posidx + poslen]
+        ret_data.append((posidx, poslen, word))
+    '''
+
+    return ret_data
+        
 
 
 def get_token_list_lm(token_list_all):
@@ -334,6 +391,10 @@ def word_depparser(sentence, is_segmented=False):
 if __name__ == '__main__':
  
     '''
+    sentence = '百度是全球第一的搜索引擎！李彦宏'
+    word_seg_list = word_seg(sentence);
+    for item in word_seg_list:
+        print ":".join(list(item));
     print '***** wordner *******'
     word_ner_list = word_ner('刘德华')
     for item in word_ner_list:
