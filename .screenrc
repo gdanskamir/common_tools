@@ -1,0 +1,36 @@
+#close the startup message
+startup_message off
+term linux
+##use ` as the Global Key
+## escape ``
+#
+##set a biger buffer
+##defscrollback 1024
+defscrollback 2048
+##screen name
+sessionname wangbo01
+#
+##A pretty bottom status bar
+##hardstatus on
+##hardstatus alwayslastline
+##hardstatus string "%{.bW}%-w%{.rY}%n %t%{-}%+w %=%{..G} %H(%l) %{..Y} %Y/%m/%d %c:%s "
+hardstatus alwayslastline                                                                                                                   
+shelltitle "$ |bash"
+##hardstatus string '%{= mK}%-Lw%{= KW}%50>%n%f* %t%{= mK}%+Lw%< %{= kG}%-=%D %d %M %Y %c:%s%{-}'
+##hardstatus string '%{= kG}%-Lw%{= kW}%50> %n%f* %t%{= kG}%+Lw%< %{= kG}%-=%c:%s%{-}'
+hardstatus string '%{= kG}[ %{G}%H %{g}][%= %{= kw}%?%-Lw%?%{r}(%{W}%n*%f%t%?(%u)%?%{r})%{w}%?%+Lw%?%?%= %{g}][%{B} %d/%m %{W}%c %{g}]'
+activity hello %H
+#
+#
+##shutdown the noise
+vbell off
+#
+## w to show the window list
+bind w windowlist -b
+bind ^w windowlist -b
+#
+##initial apps to run
+screen 1
+screen 2
+screen 3
+screen 4
