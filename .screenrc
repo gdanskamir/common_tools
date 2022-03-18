@@ -8,7 +8,6 @@ term linux
 ##defscrollback 1024
 defscrollback 2048
 ##screen name
-sessionname wangbo01
 #
 ##A pretty bottom status bar
 ##hardstatus on
